@@ -15,7 +15,10 @@ async function loadVideos() {
       const title = item.querySelector("title")?.textContent;
       const link = item.querySelector("link")?.textContent;
       const pubDate = new Date(item.querySelector("pubDate")?.textContent);
-      const videoId = link?.split("/").pop();
+
+      // Use regex to extract the video ID from the URL
+      const match = link.match(/rumble\\.com\\/([a-zA-Z0-9]+)-/);
+      const videoId = match ? match[1] : null;
 
       if (videoId) {
         const card = document.createElement("div");
