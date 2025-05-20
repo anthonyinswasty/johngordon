@@ -1,52 +1,19 @@
-const rssFeedUrl = "https://rss.app/feeds/i9XYWf2Y7v2eV4fG.xml";
 
-async function loadVideos() {
+async function updateLatestVideo() {
   try {
-    const res = await fetch(rssFeedUrl);
-    const data = await res.text();
+    const response = await fetch('https://rss.app/feeds/i9XYWf2Y7v2eV4fG.xml');
+    const text = await response.text();
     const parser = new DOMParser();
-    const xml = parser.parseFromString(data, "application/xml");
-    const items = xml.querySelectorAll("item");
+    const xml = parser.parseFromString(text, 'application/xml');
+    const firstItem = xml.querySelector('item');
+    const videoLink = firstItem.querySelector('link').textContent;
 
-    const featuredContainer = document.getElementById("featured-video");
-    const feedContainer = document.getElementById("video-feed");
+    const embedUrl = videoLink.replace('/watch/', '/embed/').replace('rumble.com/', 'rumble.com/embed/');
 
-    items.forEach((item, index) => {
-      const title = item.querySelector("title")?.textContent;
-      const contentEncoded = item.querySelector("content\:encoded")?.textContent;
-      const pubDate = new Date(item.querySelector("pubDate")?.textContent);
-
-      const iframeMatch = contentEncoded?.match(/<iframe.*?src="(.*?)"/);
-      const iframeSrc = iframeMatch ? iframeMatch[1] : null;
-
-      if (iframeSrc) {
-        const card = document.createElement("div");
-        card.className = "video-card";
-
-        const iframe = document.createElement("iframe");
-        iframe.src = iframeSrc;
-        iframe.allowFullscreen = true;
-
-        const h3 = document.createElement("h3");
-        h3.textContent = title;
-
-        const p = document.createElement("p");
-        p.textContent = pubDate.toLocaleDateString();
-
-        card.appendChild(iframe);
-        card.appendChild(h3);
-        card.appendChild(p);
-
-        if (index === 0) {
-          featuredContainer.appendChild(card);
-        } else {
-          feedContainer.appendChild(card);
-        }
-      }
-    });
+    document.getElementById('latest-video').src = embedUrl;
   } catch (error) {
-    console.error("Failed to load RSS feed:", error);
+    console.error('Error fetching the latest video:', error);
   }
 }
 
-document.addEventListener("DOMContentLoaded", loadVideos);
+window.onload = updateLatestVideo;
