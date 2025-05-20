@@ -8,10 +8,10 @@ async function loadVideos() {
     const xml = parser.parseFromString(data, "application/xml");
     const items = xml.querySelectorAll("item");
 
+    const featuredContainer = document.getElementById("featured-video");
     const feedContainer = document.getElementById("video-feed");
-    feedContainer.innerHTML = "";
 
-    items.forEach(item => {
+    items.forEach((item, index) => {
       const title = item.querySelector("title")?.textContent;
       const link = item.querySelector("link")?.textContent;
       const pubDate = new Date(item.querySelector("pubDate")?.textContent);
@@ -34,7 +34,12 @@ async function loadVideos() {
         card.appendChild(iframe);
         card.appendChild(h3);
         card.appendChild(p);
-        feedContainer.appendChild(card);
+
+        if (index === 0) {
+          featuredContainer.appendChild(card);
+        } else {
+          feedContainer.appendChild(card);
+        }
       }
     });
   } catch (error) {
