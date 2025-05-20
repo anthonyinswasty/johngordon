@@ -13,19 +13,18 @@ async function loadVideos() {
 
     items.forEach((item, index) => {
       const title = item.querySelector("title")?.textContent;
-      const link = item.querySelector("link")?.textContent;
+      const contentEncoded = item.querySelector("content\:encoded")?.textContent;
       const pubDate = new Date(item.querySelector("pubDate")?.textContent);
 
-      // Use regex to extract the video ID from the URL
-      const match = link.match(/rumble\\.com\\/([a-zA-Z0-9]+)-/);
-      const videoId = match ? match[1] : null;
+      const iframeMatch = contentEncoded?.match(/<iframe.*?src="(.*?)"/);
+      const iframeSrc = iframeMatch ? iframeMatch[1] : null;
 
-      if (videoId) {
+      if (iframeSrc) {
         const card = document.createElement("div");
         card.className = "video-card";
 
         const iframe = document.createElement("iframe");
-        iframe.src = `https://rumble.com/embed/${videoId}/`;
+        iframe.src = iframeSrc;
         iframe.allowFullscreen = true;
 
         const h3 = document.createElement("h3");
