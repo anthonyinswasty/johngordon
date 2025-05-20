@@ -8,11 +8,13 @@ async function updateLatestVideo() {
     const firstItem = xml.querySelector('item');
     const videoLink = firstItem.querySelector('link').textContent;
 
-    const embedUrl = videoLink.replace('/watch/', '/embed/').replace('rumble.com/', 'rumble.com/embed/');
+    const embedUrl = videoLink.includes("rumble.com") 
+      ? videoLink.replace("/watch/", "/embed/").replace("rumble.com/", "rumble.com/embed/") 
+      : videoLink;
 
     document.getElementById('latest-video').src = embedUrl;
   } catch (error) {
-    console.error('Error fetching the latest video:', error);
+    console.error("Error loading video:", error);
   }
 }
 
